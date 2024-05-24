@@ -23,7 +23,7 @@ app.use(
 );
 
 app.use("/api", Routes);
-const PORT = process.env.PORT || 4500;
+const PORT = process.env.PORT || 5501;
 app.listen(PORT, () => console.log("Listening on port", PORT)); // Fixed the log message
 
  
