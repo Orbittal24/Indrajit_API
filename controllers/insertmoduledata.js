@@ -1,0 +1,102 @@
+import sql from 'mssql';
+
+// Define asyncHandler
+const asyncHandler = fn => (req, res, next) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
+
+// Configuration for your MSSQL database connections
+const sqlConfig1 = {
+  user: 'admin',
+  password: 'admin',
+  server: 'DESKTOP-FKJATC0',
+  database: 'replus_treceability',
+  options: {
+    encrypt: false,
+    trustServerCertificate: true,
+  }
+};
+
+const sqlConfig2 = {
+  user: 'admin',
+  password: 'admin',
+  server: 'OMKAR',
+  database: 'replus_treceability',
+  options: {
+    encrypt: false,
+    trustServerCertificate: true,
+  }
+};
+
+// Your selectAll function with asyncHandler
+export const insertmoduledata = asyncHandler(async (req, res) => {
+  try {
+    if (req.method === 'GET') {
+      // Connect to the first MSSQL server
+      await sql.connect(sqlConfig1);
+
+      // Fetch module_barcode from the first server
+      const result1 = await sql.query('SELECT module_barcode FROM link_module_RFID');
+      const barcodes = result1.recordset.map(record => record.module_barcode);
+
+      // Log the barcodes
+      console.log('Barcodes from server 1:', barcodes);
+
+      if (barcodes.length === 0) {
+        await sql.close();
+        return res.status(404).json({ message: 'No barcodes found in server 1' });
+      }
+
+      // Close connection to the first server
+      await sql.close();
+
+      // Connect to the second MSSQL server
+      await sql.connect(sqlConfig2);
+
+      // Search for these barcodes in the second server
+      const barcodeList = barcodes.map(barcode => `'${barcode}'`).join(',');
+      const query2 = `SELECT * FROM cell_sorting WHERE module_barcode IN (${barcodeList})`;
+      const result2 = await sql.query(query2);
+
+      // Log the query results from the second server
+      console.log('Query Results from server 2:', result2.recordset);
+
+      // Close connection to the second server
+      await sql.close();
+
+      if (result2.recordset.length === 0) {
+        return res.status(404).json({ message: 'No matching records found in server 2' });
+      }
+
+      // Connect to the first MSSQL server again
+      await sql.connect(sqlConfig1);
+
+      // Insert the retrieved data into a different table in the first database
+      const insertPromises = result2.recordset.map(record => {
+        const { module_barcode,module_name, temp_final_qrcode,battery_pack_name } = record; // adjust according to your table structure
+        const insertQuery = `
+          INSERT INTO clw_station_status (module_barcode, module_name, Temp_final_qrcode,battery_pack_name)
+          VALUES ('${module_barcode}', '${module_name}', '${temp_final_qrcode}','${battery_pack_name}')
+        `;
+        return sql.query(insertQuery);
+      });
+
+      await Promise.all(insertPromises);
+
+      // Close connection to the first server
+      await sql.close();
+
+      // Send back the results from the second server
+      res.status(200).json(result2.recordset);
+    } else {
+      // Return a 405 Method Not Allowed error for unsupported methods
+      res.setHeader('Allow', ['GET']);
+      res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    // Ensure the connection is closed in case of error
+    sql.close();
+  }
+});
