@@ -39,7 +39,7 @@ export const CountAll = asyncHandler(async (request, response) => {
       SUM(CASE WHEN fpcb_status = 'NOT OK' THEN 1 ELSE 0 END) AS fpcb_weldingAllNotOKCount,
   
       COUNT(module_barcode) AS moduleCount
-  FROM [dbo].[clw_station_status];
+  FROM [replus_treceability].[dbo].[clw_station_status];
   `
     );
 
