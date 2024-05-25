@@ -27,16 +27,16 @@ export const CountAll = asyncHandler(async (request, response) => {
     const result = await pool.request().query(
       `SELECT 
       SUM(CASE WHEN v1_status = 'OK' THEN 1 ELSE 0 END) AS vision_1AllOKCount,
-      SUM(CASE WHEN v1_status = 'NOT OK' THEN 1 ELSE 0 END) AS vision_1AllNotOKCount,
+      SUM(CASE WHEN v1_status = 'NOK' THEN 1 ELSE 0 END) AS vision_1AllNotOKCount,
   
       SUM(CASE WHEN v2_status = 'OK' THEN 1 ELSE 0 END) AS vision_2AllOKCount,
-      SUM(CASE WHEN v2_status = 'NOT OK' THEN 1 ELSE 0 END) AS vision_2AllNotOKCount,
+      SUM(CASE WHEN v2_status = 'NOK' THEN 1 ELSE 0 END) AS vision_2AllNotOKCount,
   
       SUM(CASE WHEN welding_status = 'OK' THEN 1 ELSE 0 END) AS weldingAllOKCount,
-      SUM(CASE WHEN welding_status = 'NOT OK' THEN 1 ELSE 0 END) AS weldingAllNotOKCount,
+      SUM(CASE WHEN welding_status = 'NOK' THEN 1 ELSE 0 END) AS weldingAllNotOKCount,
   
       SUM(CASE WHEN fpcb_status = 'OK' THEN 1 ELSE 0 END) AS fpcb_weldingAllOKCount,
-      SUM(CASE WHEN fpcb_status = 'NOT OK' THEN 1 ELSE 0 END) AS fpcb_weldingAllNotOKCount,
+      SUM(CASE WHEN fpcb_status = 'NOK' THEN 1 ELSE 0 END) AS fpcb_weldingAllNotOKCount,
   
       COUNT(module_barcode) AS moduleCount
   FROM [replus_treceability].[dbo].[clw_station_status];
