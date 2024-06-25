@@ -26,49 +26,49 @@ export const CountAll = asyncHandler(async (request, response) => {
   try {
     const result = await pool.request().query(
       `SELECT 
-        SUM(CASE WHEN v1_status = 'OK' AND DATEPART(HOUR, v1_end_date) BETWEEN 6 AND 12 THEN 1 ELSE 0 END) AS v1_first_shift_ok,
-        SUM(CASE WHEN v1_status = 'NOT OK' AND DATEPART(HOUR, v1_end_date) BETWEEN 6 AND 12 THEN 1 ELSE 0 END) AS v1_first_shift_notok,
+        SUM(CASE WHEN v1_status = 'OK' AND DATEPART(HOUR, v1_end_date) BETWEEN 6 AND 14 THEN 1 ELSE 0 END) AS v1_first_shift_ok,
+        SUM(CASE WHEN v1_status = 'NOT OK' AND DATEPART(HOUR, v1_end_date) BETWEEN 6 AND 14 THEN 1 ELSE 0 END) AS v1_first_shift_notok,
         SUM(CASE WHEN v1_status = 'OK' AND DATEPART(HOUR, v1_end_date) BETWEEN 13 AND 21 THEN 1 ELSE 0 END) AS v1_second_shift_ok,
         SUM(CASE WHEN v1_status = 'NOT OK' AND DATEPART(HOUR, v1_end_date) BETWEEN 13 AND 21 THEN 1 ELSE 0 END) AS v1_second_shift_notok,
         SUM(CASE WHEN v1_status = 'OK' AND (DATEPART(HOUR, v1_end_date) BETWEEN 22 AND 23 OR DATEPART(HOUR, v1_end_date) BETWEEN 0 AND 5) THEN 1 ELSE 0 END) AS v1_third_shift_ok,
         SUM(CASE WHEN v1_status = 'NOT OK' AND (DATEPART(HOUR, v1_end_date) BETWEEN 22 AND 23 OR DATEPART(HOUR, v1_end_date) BETWEEN 0 AND 5) THEN 1 ELSE 0 END) AS v1_third_shift_notok,
         
         -- v2_status counts
-        SUM(CASE WHEN v2_status = 'OK' AND DATEPART(HOUR, v2_end_date) BETWEEN 6 AND 12 THEN 1 ELSE 0 END) AS v2_first_shift_ok,
-        SUM(CASE WHEN v2_status = 'NOT OK' AND DATEPART(HOUR, v2_end_date) BETWEEN 6 AND 12 THEN 1 ELSE 0 END) AS v2_first_shift_notok,
+        SUM(CASE WHEN v2_status = 'OK' AND DATEPART(HOUR, v2_end_date) BETWEEN 6 AND 14 THEN 1 ELSE 0 END) AS v2_first_shift_ok,
+        SUM(CASE WHEN v2_status = 'NOT OK' AND DATEPART(HOUR, v2_end_date) BETWEEN 6 AND 14 THEN 1 ELSE 0 END) AS v2_first_shift_notok,
         SUM(CASE WHEN v2_status = 'OK' AND DATEPART(HOUR, v2_end_date) BETWEEN 13 AND 21 THEN 1 ELSE 0 END) AS v2_second_shift_ok,
         SUM(CASE WHEN v2_status = 'NOT OK' AND DATEPART(HOUR, v2_end_date) BETWEEN 13 AND 21 THEN 1 ELSE 0 END) AS v2_second_shift_notok,
         SUM(CASE WHEN v2_status = 'OK' AND (DATEPART(HOUR, v2_end_date) BETWEEN 22 AND 23 OR DATEPART(HOUR, v2_end_date) BETWEEN 0 AND 5) THEN 1 ELSE 0 END) AS v2_third_shift_ok,
         SUM(CASE WHEN v2_status = 'NOT OK' AND (DATEPART(HOUR, v2_end_date) BETWEEN 22 AND 23 OR DATEPART(HOUR, v2_end_date) BETWEEN 0 AND 5) THEN 1 ELSE 0 END) AS v2_third_shift_notok,
 
         -- welding_status counts
-        SUM(CASE WHEN welding_status = 'OK' AND DATEPART(HOUR, welding_end_date) BETWEEN 6 AND 12 THEN 1 ELSE 0 END) AS welding_first_shift_ok,
-        SUM(CASE WHEN welding_status = 'NOT OK' AND DATEPART(HOUR, welding_end_date) BETWEEN 6 AND 12 THEN 1 ELSE 0 END) AS welding_first_shift_notok,
+        SUM(CASE WHEN welding_status = 'OK' AND DATEPART(HOUR, welding_end_date) BETWEEN 6 AND 14 THEN 1 ELSE 0 END) AS welding_first_shift_ok,
+        SUM(CASE WHEN welding_status = 'NOT OK' AND DATEPART(HOUR, welding_end_date) BETWEEN 6 AND 14 THEN 1 ELSE 0 END) AS welding_first_shift_notok,
         SUM(CASE WHEN welding_status = 'OK' AND DATEPART(HOUR, welding_end_date) BETWEEN 13 AND 21 THEN 1 ELSE 0 END) AS welding_second_shift_ok,
         SUM(CASE WHEN welding_status = 'NOT OK' AND DATEPART(HOUR, welding_end_date) BETWEEN 13 AND 21 THEN 1 ELSE 0 END) AS welding_second_shift_notok,
         SUM(CASE WHEN welding_status = 'OK' AND (DATEPART(HOUR, welding_end_date) BETWEEN 22 AND 23 OR DATEPART(HOUR, welding_end_date) BETWEEN 0 AND 5) THEN 1 ELSE 0 END) AS welding_third_shift_ok,
         SUM(CASE WHEN welding_status = 'NOT OK' AND (DATEPART(HOUR, welding_end_date) BETWEEN 22 AND 23 OR DATEPART(HOUR, welding_end_date) BETWEEN 0 AND 5) THEN 1 ELSE 0 END) AS welding_third_shift_notok,
 
         -- fpcb_status counts
-        SUM(CASE WHEN fpcb_status = 'OK' AND DATEPART(HOUR, fpcb_end_date) BETWEEN 6 AND 12 THEN 1 ELSE 0 END) AS fpcb_first_shift_ok,
-        SUM(CASE WHEN fpcb_status = 'NOT OK' AND DATEPART(HOUR, fpcb_end_date) BETWEEN 6 AND 12 THEN 1 ELSE 0 END) AS fpcb_first_shift_notok,
+        SUM(CASE WHEN fpcb_status = 'OK' AND DATEPART(HOUR, fpcb_end_date) BETWEEN 6 AND 14 THEN 1 ELSE 0 END) AS fpcb_first_shift_ok,
+        SUM(CASE WHEN fpcb_status = 'NOT OK' AND DATEPART(HOUR, fpcb_end_date) BETWEEN 6 AND 14 THEN 1 ELSE 0 END) AS fpcb_first_shift_notok,
         SUM(CASE WHEN fpcb_status = 'OK' AND DATEPART(HOUR, fpcb_end_date) BETWEEN 13 AND 21 THEN 1 ELSE 0 END) AS fpcb_second_shift_ok,
         SUM(CASE WHEN fpcb_status = 'NOT OK' AND DATEPART(HOUR, fpcb_end_date) BETWEEN 13 AND 21 THEN 1 ELSE 0 END) AS fpcb_second_shift_notok,
         SUM(CASE WHEN fpcb_status = 'OK' AND (DATEPART(HOUR, fpcb_end_date) BETWEEN 22 AND 23 OR DATEPART(HOUR, fpcb_end_date) BETWEEN 0 AND 5) THEN 1 ELSE 0 END) AS fpcb_third_shift_ok,
         SUM(CASE WHEN fpcb_status = 'NOT OK' AND (DATEPART(HOUR, fpcb_end_date) BETWEEN 22 AND 23 OR DATEPART(HOUR, fpcb_end_date) BETWEEN 0 AND 5) THEN 1 ELSE 0 END) AS fpcb_third_shift_notok,
 
         -- module_a_barcode counts
-        SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 6 AND 12 THEN 1 ELSE 0 END) AS module_first_shift_total,
+        SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 6 AND 14 THEN 1 ELSE 0 END) AS module_first_shift_total,
         SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 13 AND 21 THEN 1 ELSE 0 END) AS module_second_shift_total,
         SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 22 AND 23 OR DATEPART(HOUR, fpcb_end_date) BETWEEN 0 AND 5 THEN 1 ELSE 0 END) AS module_third_shift_total,
 
-         SUM(CASE WHEN DATEPART(HOUR, v1_end_date) BETWEEN 6 AND 12 THEN v1_difference ELSE 0 END) AS v1_fristshift_Diff,
+         SUM(CASE WHEN DATEPART(HOUR, v1_end_date) BETWEEN 6 AND 14 THEN v1_difference ELSE 0 END) AS v1_fristshift_Diff,
           SUM(CASE WHEN DATEPART(HOUR, v1_end_date) BETWEEN 13 AND 21 THEN v1_difference ELSE 0 END) AS v1_secoundshift_Diff,
-          SUM(CASE WHEN DATEPART(HOUR, v2_end_date) BETWEEN 6 AND 12 THEN v2_difference ELSE 0 END) AS v2_fristshift_Diff,
+          SUM(CASE WHEN DATEPART(HOUR, v2_end_date) BETWEEN 6 AND 14 THEN v2_difference ELSE 0 END) AS v2_fristshift_Diff,
           SUM(CASE WHEN DATEPART(HOUR, v2_end_date) BETWEEN 13 AND 21 THEN v2_difference ELSE 0 END) AS v2_secoundshift_Diff,
           SUM(CASE WHEN DATEPART(HOUR, welding_end_date) BETWEEN 6 AND 12 THEN welding_difference ELSE 0 END) AS welding_fristshift_Diff,
           SUM(CASE WHEN DATEPART(HOUR, welding_end_date) BETWEEN 13 AND 21 THEN welding_difference ELSE 0 END) AS welding_secoundshift_Diff,
-          SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 6 AND 12 THEN fpcb_difference ELSE 0 END) AS fpcb_fristshift_Diff,
+          SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 6 AND 14 THEN fpcb_difference ELSE 0 END) AS fpcb_fristshift_Diff,
           SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 13 AND 21 THEN fpcb_difference ELSE 0 END) AS fpcb_secoundshift_Diff,
             (SELECT TOP 1 module_barcode FROM dbo.linking_module_RFID ORDER BY sr_no DESC) AS latest_module_barcode
           
