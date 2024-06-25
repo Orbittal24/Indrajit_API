@@ -69,8 +69,8 @@ export const CountAll = asyncHandler(async (request, response) => {
           SUM(CASE WHEN DATEPART(HOUR, welding_end_date) BETWEEN 6 AND 12 THEN welding_difference ELSE 0 END) AS welding_fristshift_Diff,
           SUM(CASE WHEN DATEPART(HOUR, welding_end_date) BETWEEN 13 AND 21 THEN welding_difference ELSE 0 END) AS welding_secoundshift_Diff,
           SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 6 AND 12 THEN fpcb_difference ELSE 0 END) AS fpcb_fristshift_Diff,
-          SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 13 AND 21 THEN fpcb_difference ELSE 0 END) AS fpcb_secoundshift_Diff
-           (SELECT TOP 1 module_barcode FROM dbo.linking_module_RFID ORDER BY sr_no DESC) AS latest_module_barcode
+          SUM(CASE WHEN DATEPART(HOUR, fpcb_end_date) BETWEEN 13 AND 21 THEN fpcb_difference ELSE 0 END) AS fpcb_secoundshift_Diff,
+            (SELECT TOP 1 module_barcode FROM dbo.linking_module_RFID ORDER BY sr_no DESC) AS latest_module_barcode
           
       FROM [dbo].[clw_station_status]
       WHERE CAST(v1_end_date AS DATE) = CAST(GETDATE() AS DATE)
