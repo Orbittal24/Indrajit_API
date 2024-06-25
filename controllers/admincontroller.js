@@ -5,7 +5,7 @@ const config = {
   user: "admin2",
   password: "reset@123",
   database: "replus_treceability",
-  server: "DESKTOP-FKJATC0",
+  server: "REP-TRACE",
   options: {
     encrypt: false, // Change to true if you're using SSL
     trustServerCertificate: false, // Change to true if using self-signed certificates
