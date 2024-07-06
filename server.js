@@ -22,6 +22,15 @@ app.use(
   })
 );
 
+app.use((req, res, next) => { 
+  res.setHeader('Access-Control-Allow-Origin', 'http://10.5.0.20:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); 
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); 
+  next(); });
+
+
+
+
 app.use("/api", Routes);
 const PORT = process.env.PORT || 5501;
 app.listen(PORT, () => console.log("Listening on port", PORT)); // Fixed the log message
