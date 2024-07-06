@@ -225,60 +225,51 @@ export const WeekMonthDiff = asyncHandler(async (request, response) => {
   try {
     const avgvalue = 480.0; 
 
-    const currentDate = new Date();
-const startOfWeek = new Date(currentDate);
-startOfWeek.setDate(currentDate.getDate() - (currentDate.getDay() + 6) % 7); // Go back to the beginning of the current week, considering Monday as the start
-startOfWeek.setHours(6, 0, 0, 0); // Start of the week (Monday at 6:00 AM)
+    // const currentDate = new Date();
+    // const startOfWeek = new Date(currentDate);
+    // startOfWeek.setDate(currentDate.getDate() - (currentDate.getDay() + 6) % 7); // Go back to the beginning of the current week, considering Monday as the start
+    // startOfWeek.setHours(6, 0, 0, 0); // Start of the week (Monday at 6:00 AM)
 
-const endOfWeek = new Date(currentDate);
-endOfWeek.setDate(startOfWeek.getDate() + 6); // Go forward 6 days to reach Saturday
-endOfWeek.setHours(22, 0, 0, 0); // End of the week (Saturday at 10:00 PM)
+    // const endOfWeek = new Date(startOfWeek);
+    // endOfWeek.setDate(startOfWeek.getDate() + 6); // Go forward 6 days to reach Saturday
+    // endOfWeek.setHours(22, 0, 0, 0); // End of the week (Saturday at 10:00 PM)
 
+    // const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    // const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59, 999);
+    await sql.connect(config);
+    const result = await sql.query`
+      SELECT 
+     
+        SUM(CAST(v1_difference AS DECIMAL(10, 2))) / ${avgvalue} AS v1_weekDiff_Avg,
+        SUM(CAST(v2_difference AS DECIMAL(10, 2))) / ${avgvalue} AS v2_weekDiff_Avg,
+        SUM(CAST(welding_difference AS DECIMAL(10, 2))) / ${avgvalue} AS welding_weekDiff_Avg,
+        SUM(CAST(fpcb_difference AS DECIMAL(10, 2))) / ${avgvalue} AS fpcb_weekDiff_Avg
+      FROM [dbo].[clw_station_status]
 
+WHERE 
+    (v1_end_date >= DATEADD(HOUR, 6, DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0)) 
+     AND v1_end_date < DATEADD(HOUR, 22, DATEADD(DAY, 5, DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0))))
+    OR
+    (v2_end_date >= DATEADD(HOUR, 6, DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0)) 
+     AND v2_end_date < DATEADD(HOUR, 22, DATEADD(DAY, 5, DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0))))
+    OR
+    (welding_end_date >= DATEADD(HOUR, 6, DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0)) 
+     AND welding_end_date < DATEADD(HOUR, 22, DATEADD(DAY, 5, DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0))))
+    OR
+    (fpcb_end_date >= DATEADD(HOUR, 6, DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0)) 
+     AND fpcb_end_date < DATEADD(HOUR, 22, DATEADD(DAY, 5, DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0))))
 
-    const result = await pool.request()
-    .input('avgvalue', sql.Float, avgvalue)
-    .input('startOfWeek', sql.DateTime, startOfWeek)
-    .input('endOfWeek', sql.DateTime, endOfWeek)
-    .input('firstDayOfMonth', sql.DateTime, firstDayOfMonth)
-    .input('lastDayOfMonth', sql.DateTime, lastDayOfMonth)
-    .query(`
-      
-        SELECT 
-    SUM(CONVERT(FLOAT, v1_difference)) / @avgvalue AS v1_weekDiff_Avg,
-    SUM(CONVERT(FLOAT, v2_difference)) / @avgvalue AS v2_weekDiff_Avg,
-    SUM(CONVERT(FLOAT, welding_difference)) / @avgvalue AS welding_weekDiff_Avg,
-    SUM(CONVERT(FLOAT, fpcb_difference)) / @avgvalue AS fpcb_Diff_weekAvg,
-
-    SUM(CONVERT(FLOAT, v1_difference)) / @avgvalue AS v1_monthDiff_Avg,
-    SUM(CONVERT(FLOAT, v2_difference)) / @avgvalue AS v2_monthDiff_Avg,
-    SUM(CONVERT(FLOAT, welding_difference)) / @avgvalue AS welding_monthDiff_Avg,
-    SUM(CONVERT(FLOAT, fpcb_difference)) / @avgvalue AS fpcb_Diff_monthAvg
-
-    
-FROM [dbo].[clw_station_status]
-WHERE v1_end_date BETWEEN @startOfWeek AND @endOfWeek
-  AND v2_end_date BETWEEN @startOfWeek AND @endOfWeek
-  AND welding_end_date BETWEEN @startOfWeek AND @endOfWeek
-  AND fpcb_end_date BETWEEN @startOfWeek AND @endOfWeek
-
-    AND v1_end_date BETWEEN @firstDayOfMonth AND @lastDayOfMonth
-            AND v2_end_date BETWEEN @firstDayOfMonth AND @lastDayOfMonth
-            AND welding_end_date BETWEEN @firstDayOfMonth AND @lastDayOfMonth
-            AND fpcb_end_date BETWEEN @firstDayOfMonth AND @lastDayOfMonth;
-             `);
+    `;
 
     response.status(200).json({ status: "success", data: result.recordset });
   } catch (error) {
     console.error("Error while counting records:", error);
     response.status(500).json({ status: "error", msg: "Error while counting records" });
   }
-});
+}); 
 
-// Function to call CountAll1 at an interval
+// Function to call WeekMonthDiff at an interval
 const callWeekMonthDiff = () => {
   // Mock request and response objects
   const request = {}; // Add any necessary properties
